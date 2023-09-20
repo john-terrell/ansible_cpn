@@ -1,0 +1,5 @@
+[maas_controllers]
+o7050   ansible_host=10.10.200.5    # maas.coolpeople.io
+
+[file_servers]
+r710    ansible_host=10.10.200.10   # nas0.coolpeople.io

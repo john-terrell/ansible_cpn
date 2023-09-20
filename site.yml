@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Ensure packages updated
+    apt:
+      update_cache: yes
+      upgrade: dist
+    when: ansible_distribution in ['Debian', 'Ubuntu']
+
+- hosts: maas_controllers
+  become: true
+  roles:
+  - maas_controller
+
+- hosts: file_servers
+  become: true
+  roles:
+  - cockpit-nas
