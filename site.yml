@@ -55,6 +55,7 @@
   roles: 
   - role: ansible_role_microk8s
     vars:
+      microk8s_version: 1.28/stable
       microk8s_plugins:
         community: true
         dns: true
