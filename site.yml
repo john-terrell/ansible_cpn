@@ -1,7 +1,33 @@
 ---
+- hosts: pve_servers
+  become: true
+  pre_tasks:
+  - name: Ensure enterprise Ceph apt repository is absent
+    ansible.builtin.apt_repository:
+      repo: deb https://enterprise.proxmox.com/debian/ceph-quincy bookworm enterprise
+      state: absent
+      filename: ceph
+
+  - name: Ensure non-enterprise Ceph apt repository is present
+    ansible.builtin.apt_repository:
+      repo: deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
+      state: present
+      filename: ceph
+
+  - name: Ensure enterprise Proxmox apt repositories is absent
+    ansible.builtin.apt_repository:
+      repo: deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
+      state: absent
+      filename: pve-enterprise
+
+  - name: Ensure non-enterprise Proxmox apt repositories are present
+    ansible.builtin.apt_repository:
+      repo: deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+      state: present
+
 - hosts: all
   become: true
-  tasks:
+  pre_tasks:
   - name: Ensure packages updated
     apt:
       update_cache: yes
