@@ -34,6 +34,13 @@
       upgrade: dist
     when: ansible_distribution in ['Debian', 'Ubuntu']
 
+  tasks:
+  - name: Ensure common packages are installed
+    apt:
+      name:
+      - vim
+      state: present
+
 - hosts: maas_controllers
   become: true
   roles:
@@ -43,3 +50,17 @@
   become: true
   roles:
   - cockpit-nas
+
+- hosts: k8s_staging
+  roles: 
+  - role: ansible_role_microk8s
+    vars:
+      microk8s_plugins:
+        community: true
+        dns: true
+        ha-cluster: true
+        helm: true
+        helm3: true
+        ingress: true
+        registry: true
+        rook-ceph: true

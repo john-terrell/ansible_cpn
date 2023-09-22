@@ -9,6 +9,11 @@ k8s-staging3    ansible_host=10.10.107.63
 o7050           ansible_host=10.10.200.5    # maas.coolpeople.io
 r710            ansible_host=10.10.200.10   # nas0.coolpeople.io
 
+[k8s_staging]
+k8s-staging1
+k8s-staging2
+k8s-staging3
+
 [maas_controllers]
 o7050
 
