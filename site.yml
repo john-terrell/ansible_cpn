@@ -39,7 +39,22 @@
     apt:
       name:
       - vim
+      - curl
       state: present
+
+- hosts: qemu_vms
+  become: true
+  tasks:
+  - name: Ensure QEMU quest agent is installed
+    apt: 
+      name:
+      - qemu-guest-agent
+      state: present
+  - name: Ensure QEMU guest agent service is enabled
+    service:
+      name: qemu-guest-agent
+      state: started
+      enabled: true
 
 - hosts: maas_controllers
   become: true
@@ -51,7 +66,17 @@
   roles:
   - cockpit-nas
 
+- hosts: k8s_controllers
+  become: true
+  tasks:
+  - name: Ensure keepalived is installed on all K8S controllers
+    apt:
+      name:
+      - keepalived
+      state: present
+
 - hosts: k8s_staging
+  become: true
   roles: 
   - role: ansible_role_microk8s
     vars:
@@ -65,3 +90,23 @@
         ingress: true
         registry: true
         rook-ceph: true
+        hostpath-storage: false
+
+# Any K8S-staging cluster setup happens on k8s-staging1 host
+# - hosts: k8s-staging1
+#   tasks:
+#   - name: Ensure NFS storage support repository is available.
+#     kubernetes.core.helm_repository:
+#       name: nfs-subdir-external-provisioner
+#       repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/"
+
+#   - name: Ensure NFS storage support added to k8s-staging
+#     kubernetes.core.helm:
+#       release_name: nfs-subdir-external-provisioner 
+#       chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+#       release_namespace: nfs-subdir-provisioner
+#       values:
+#         nfs:
+#           server: 10.10.64.10
+#           path: /tank/k8s
+
