@@ -1,0 +1,42 @@
+---
+- name: Ensure stash prerequisites are present
+  apt:
+    name:
+    - ffmpeg
+    state: present
+
+- name: Ensure stash binary has been downloaded
+  ansible.builtin.get_url:
+    url: https://github.com/stashapp/stash/releases/latest/download/stash-linux
+    dest: /usr/bin/stash
+    mode: '0555'
+
+- name: Ensure stash group exists
+  ansible.builtin.group:
+    name: stash
+    state: present
+
+- name: Ensure stash user exists
+  ansible.builtin.user:
+    name: stash
+    comment: Stash McStashface
+    group: stash
+
+- name: Ensure stash working directory exists
+  ansible.builtin.file:
+    path: /opt/stash
+    state: directory
+    recurse: yes
+    owner: stash
+    group: stash
+
+- name: Ensure stash unit file is created
+  template:
+    src: templates/stash.service.j2
+    dest: /lib/systemd/system/stash.service
+
+- name: Ensure stash service has been enabled and started
+  service:
+    name: stash
+    state: started
+    enabled: true

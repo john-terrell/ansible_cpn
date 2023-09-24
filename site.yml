@@ -66,18 +66,19 @@
   roles:
   - cockpit-nas
 
-- hosts: k8s_controllers
-  become: true
-  tasks:
-  - name: Ensure keepalived is installed on all K8S controllers
-    apt:
-      name:
-      - keepalived
-      state: present
-
 - hosts: k8s_staging
   become: true
   roles: 
+  # - role: ansible-keepalived
+  #   vars:
+  #     keepalived_instances:
+  #       interface: "{{ vrrp_nic | default(ansible_default_ipv4.interface, true) }}"
+  #       state: "{{ (groups['k8s_staging'].index(inventory_hostname) == 0) | ternary('MASTER','BACKUP') }}"
+  #       virtual_router_id: "{{ virtual_router_id }}"
+  #       priority: "{{ (inventory_hostname == groups['k8s_staging'][0]) | ternary('250', '100') }}"
+  #       vips:
+  #       - "{{ virtual_ip }} dev {{ vrrp_nic | default(ansible_default_ipv4.interface, true) }}"
+
   - role: ansible_role_microk8s
     vars:
       microk8s_version: 1.28/stable
@@ -110,3 +111,7 @@
 #           server: 10.10.64.10
 #           path: /tank/k8s
 
+- hosts: stash_servers
+  become: true
+  roles:
+  - role: stash_host
