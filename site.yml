@@ -1,4 +1,27 @@
 ---
+#
+# All hosts
+#
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: Ensure packages updated
+    apt:
+      update_cache: yes
+      upgrade: dist
+    when: ansible_distribution in ['Debian', 'Ubuntu']
+
+  tasks:
+  - name: Ensure common packages are installed
+    apt:
+      name:
+      - vim
+      - curl
+      state: present
+
+#
+# Proxmox VE Servers
+#
 - hosts: pve_servers
   become: true
   pre_tasks:
@@ -37,23 +60,9 @@
           vips:
           - "{{ virtual_ip }} dev {{ vrrp_nic | default(ansible_default_ipv4.interface, true) }}"
 
-- hosts: all
-  become: true
-  pre_tasks:
-  - name: Ensure packages updated
-    apt:
-      update_cache: yes
-      upgrade: dist
-    when: ansible_distribution in ['Debian', 'Ubuntu']
-
-  tasks:
-  - name: Ensure common packages are installed
-    apt:
-      name:
-      - vim
-      - curl
-      state: present
-
+#
+# QEMU Virtual Machines
+#
 - hosts: qemu_vms
   become: true
   tasks:
@@ -68,16 +77,25 @@
       state: started
       enabled: true
 
+#
+# MAAS Controllers
+#
 - hosts: maas_controllers
   become: true
   roles:
   - maas_controller
 
+#
+# File servers (SMB/NFS)
+#
 - hosts: file_servers
   become: true
   roles:
   - cockpit-nas
 
+#
+# K8S staging cluster
+#
 - hosts: k8s_staging
   become: true
   roles:
@@ -124,6 +142,9 @@
 #           server: 10.10.64.10
 #           path: /tank/k8s
 
+#
+# Stash media servers
+#
 - hosts: stash_servers
   become: true
   roles:
