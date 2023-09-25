@@ -1,6 +1,6 @@
-r620-1          ansible_host=10.10.100.31
-r620-2          ansible_host=10.10.100.32
-r620-3          ansible_host=10.10.100.33
+r620-1          ansible_host=10.10.100.31 vrrp_nic=eno3
+r620-2          ansible_host=10.10.100.32 vrrp_nic=eno3
+r620-3          ansible_host=10.10.100.33 vrrp_nic=eno3
 
 jellyfin        ansible_host=10.10.105.80   # jellyfin.coolpeople.io
 
@@ -45,6 +45,10 @@ o7050
 r620-1
 r620-2
 r620-3
+
+[pve_servers:vars]
+virtual_router_id=43
+virtual_ip=10.10.100.30
 
 #
 # Generic File Servers
