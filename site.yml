@@ -94,6 +94,16 @@
   - cockpit-nas
 
 #
+# NextCloud servers
+#
+- hosts: nextcloud_servers
+  become: true
+  roles:
+  - role: nextcloud_host
+    vars:
+      nextcloud_trusted_proxy: "10.10.0.6"
+
+#
 # K8S staging cluster
 #
 - hosts: k8s_staging

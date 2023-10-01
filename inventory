@@ -1,12 +1,12 @@
-r620-1          ansible_host=10.10.100.31 vrrp_nic=eno3
-r620-2          ansible_host=10.10.100.32 vrrp_nic=eno3
-r620-3          ansible_host=10.10.100.33 vrrp_nic=eno3
+r620-1          ansible_host=10.10.100.31 
+r620-2          ansible_host=10.10.100.32
+r620-3          ansible_host=10.10.100.33
 
 jellyfin        ansible_host=10.10.105.80   # jellyfin.coolpeople.io
 
-k8s-staging1    ansible_host=10.10.107.61 vrrp_nic=ens18
-k8s-staging2    ansible_host=10.10.107.62 vrrp_nic=ens18
-k8s-staging3    ansible_host=10.10.107.63 vrrp_nic=ens18
+k8s-staging1    ansible_host=10.10.107.61 
+k8s-staging2    ansible_host=10.10.107.62 
+k8s-staging3    ansible_host=10.10.107.63
 
 o7050           ansible_host=10.10.200.5    # maas.coolpeople.io
 r710            ansible_host=10.10.200.10   # nas0.coolpeople.io
@@ -24,9 +24,9 @@ jellyfin
 # K8S Staging Cluster Members
 #
 [k8s_staging]
-k8s-staging1
-k8s-staging2
-k8s-staging3
+k8s-staging1 vrrp_nic=ens18
+k8s-staging2 vrrp_nic=ens18
+k8s-staging3 vrrp_nic=ens18
 
 [k8s_staging:vars]
 virtual_router_id=42
@@ -42,9 +42,9 @@ o7050
 # Proxmox Virtual Environment (PVE) servers
 #
 [pve_servers]
-r620-1
-r620-2
-r620-3
+r620-1 vrrp_nic=eno3
+r620-2 vrrp_nic=eno3
+r620-3 vrrp_nic=eno3
 
 [pve_servers:vars]
 virtual_router_id=43
@@ -61,3 +61,9 @@ r710
 #
 [stash_servers]
 r710
+
+#
+# NextCloud servers
+#
+[nextcloud_servers]
+r710 nextcloud_dataset=apoc/nextcloud nextcloud_dataset_dir=/apoc/nextcloud/ nextcloud_dataset_quota=5TiB
