@@ -102,6 +102,7 @@
   - role: nextcloud_host
     vars:
       nextcloud_trusted_proxy: "10.10.0.6"
+      nextcloud_overwritecliurl: "http://nextcloud.coolpeople.io"
 
 #
 # K8S staging cluster
