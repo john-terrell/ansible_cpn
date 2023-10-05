@@ -60,7 +60,7 @@
     name: nextcloud
     state: started
     pod: nextcloud_pod
-    image: docker.io/library/nextcloud:25-apache
+    image: docker.io/library/nextcloud:26-apache
     network: nextcloud_network
     ports:
     - "8080:80"
