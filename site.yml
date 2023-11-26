@@ -155,7 +155,7 @@
   - name: ensure kube config is created
     shell: microk8s config >> ~/.kube/config
     changed_when: false
-    
+
 #
 # k8s_production operations performed on first host
 #
@@ -181,10 +181,16 @@
       chart_ref: postgres-operator-charts/postgres-operator
       namespace: postgresql-operator
 
-  # - name: ensure postgres-operator-ui-charts helm repo installed
-  #   kubernetes.core.helm_repository:
-  #     name: postgres-operator-ui-charts
-  #     repo_url: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator-ui"
+  - name: ensure postgres-operator-ui-charts helm repo installed
+    kubernetes.core.helm_repository:
+      name: postgres-operator-ui-charts
+      repo_url: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator-ui"
+
+  - name: ensure postgresql-operator-ui installed
+    kubernetes.core.helm:
+      name: postgres-operator-ui
+      chart_ref: postgres-operator-ui-charts/postgres-operator-ui
+      namespace: postgresql-operator
 
 #
 # Stash media servers
