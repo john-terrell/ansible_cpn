@@ -129,6 +129,63 @@
       microk8s_enable_HA: true
       microk8s_group_HA: k8s_prod_hosts
 
+  tasks:
+  - name: ensure python3-pip is installed
+    package:
+      name: python3-pip
+      state: present
+
+  - name: ensure libpq-dev is installed (required by psycopg2)
+    package:
+      name: libpq-dev
+      state: present
+
+  - name: ensure k8s python packages are installed via pip
+    ansible.builtin.pip:
+      name: 
+      - psycopg2
+      - kubernetes
+
+  - name: ensure .kube directory exists
+    file:
+      path: ~/.kube
+      state: directory
+      mode: '0755'
+
+  - name: ensure kube config is created
+    shell: microk8s config >> ~/.kube/config
+    changed_when: false
+    
+#
+# k8s_production operations performed on first host
+#
+- hosts: k8s-prod1
+  become: true
+  tasks:
+  - name: ensure postgresql-operator namespace is present
+    k8s:
+      context: microk8s
+      name: postgresql-operator
+      api_version: v1
+      kind: Namespace
+      state: present
+
+  - name: ensure postgresql-operator-charts helm repo installed
+    kubernetes.core.helm_repository:
+      name: postgres-operator-charts
+      repo_url: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator"
+
+  - name: ensure postgresql-operator installed
+    kubernetes.core.helm:
+      name: postgres-operator
+      chart_ref: postgres-operator-charts/postgres-operator
+      namespace: postgresql-operator
+
+  # - name: ensure postgres-operator-ui-charts helm repo installed
+  #   kubernetes.core.helm_repository:
+  #     name: postgres-operator-ui-charts
+  #     repo_url: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator-ui"
+
 #
 # Stash media servers
 #
