@@ -4,39 +4,39 @@ r620-3          ansible_host=10.10.100.33
 
 jellyfin        ansible_host=10.10.105.80   # jellyfin.coolpeople.io
 
-k8s-staging1    ansible_host=10.10.107.61 
-k8s-staging2    ansible_host=10.10.107.62 
-k8s-staging3    ansible_host=10.10.107.63
+k8s-prod1       ansible_host=10.10.107.61
+k8s-prod2       ansible_host=10.10.107.62
+k8s-prod3       ansible_host=10.10.107.63
 
-o7050           ansible_host=10.10.200.5    # maas.coolpeople.io
-r710            ansible_host=10.10.200.10   # nas0.coolpeople.io
+# o7050           ansible_host=10.10.200.5    # maas.coolpeople.io
+# r710            ansible_host=10.10.200.10   # nas0.coolpeople.io
 
 #
 # QEMU VMs
 #
 [qemu_vms]
-k8s-staging1
-k8s-staging2
-k8s-staging3
+k8s-prod1
+k8s-prod2
+k8s-prod3
 jellyfin
 
 #
 # K8S Staging Cluster Members
 #
-[k8s_staging]
-k8s-staging1 vrrp_nic=ens18
-k8s-staging2 vrrp_nic=ens18
-k8s-staging3 vrrp_nic=ens18
+[k8s_prod_hosts]
+k8s-prod1 vrrp_nic=ens18
+k8s-prod2 vrrp_nic=ens18
+k8s-prod3 vrrp_nic=ens18
 
-[k8s_staging:vars]
+[k8s_prod_hosts:vars]
 virtual_router_id=42
 virtual_ip=10.10.107.60/22
 
 #
 # MAAS Controllers
 #
-[maas_controllers]
-o7050
+# [maas_controllers]
+# o7050
 
 #
 # Proxmox Virtual Environment (PVE) servers
@@ -53,17 +53,11 @@ virtual_ip=10.10.100.30
 #
 # Generic File Servers
 #
-[file_servers]
-r710
+# [file_servers]
+# r710
 
 #
 # Stash Servers
 #
-[stash_servers]
-r710
-
-#
-# NextCloud servers
-#
-[nextcloud_servers]
-r710 nextcloud_dataset=apoc/nextcloud nextcloud_dataset_dir=/apoc/nextcloud/ nextcloud_dataset_quota=5TiB
+# [stash_servers]
+# r710

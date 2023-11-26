@@ -17,6 +17,8 @@
       name:
       - vim
       - curl
+      - inetutils-ping
+      - inetutils-traceroute
       state: present
 
 #
@@ -94,20 +96,9 @@
   - cockpit-nas
 
 #
-# NextCloud servers
+# K8S production cluster
 #
-- hosts: nextcloud_servers
-  become: true
-  roles:
-  - role: nextcloud_host
-    vars:
-      nextcloud_trusted_proxy: "10.10.0.6"
-      nextcloud_overwritecliurl: "http://nextcloud.coolpeople.io"
-
-#
-# K8S staging cluster
-#
-- hosts: k8s_staging
+- hosts: k8s_prod_hosts
   become: true
   roles:
   - role: ansible-keepalived
@@ -115,9 +106,9 @@
       keepalived_instances:
         internal:
           interface: "{{ vrrp_nic | default(ansible_default_ipv4.interface, true) }}"
-          state: "{{ (groups['k8s_staging'].index(inventory_hostname) == 0) | ternary('MASTER','BACKUP') }}"
+          state: "{{ (groups['k8s_prod_hosts'].index(inventory_hostname) == 0) | ternary('MASTER','BACKUP') }}"
           virtual_router_id: "{{ virtual_router_id }}"
-          priority: "{{ (inventory_hostname == groups['k8s_staging'][0]) | ternary('250', '100') }}"
+          priority: "{{ (inventory_hostname == groups['k8s_prod_hosts'][0]) | ternary('250', '100') }}"
           vips:
           - "{{ virtual_ip }} dev {{ vrrp_nic | default(ansible_default_ipv4.interface, true) }}"
 
@@ -134,24 +125,9 @@
         registry: true
         rook-ceph: true
         hostpath-storage: false
-
-# Any K8S-staging cluster setup happens on k8s-staging1 host
-# - hosts: k8s-staging1
-#   tasks:
-#   - name: Ensure NFS storage support repository is available.
-#     kubernetes.core.helm_repository:
-#       name: nfs-subdir-external-provisioner
-#       repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/"
-
-#   - name: Ensure NFS storage support added to k8s-staging
-#     kubernetes.core.helm:
-#       release_name: nfs-subdir-external-provisioner 
-#       chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
-#       release_namespace: nfs-subdir-provisioner
-#       values:
-#         nfs:
-#           server: 10.10.64.10
-#           path: /tank/k8s
+        cert-manager: true
+      microk8s_enable_HA: true
+      microk8s_group_HA: k8s_prod_hosts
 
 #
 # Stash media servers
